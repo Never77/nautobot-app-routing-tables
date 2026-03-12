@@ -9,29 +9,33 @@ menu_items = (
                 name="Routing Tables",
                 items=(
                     NavMenuItem(
-                        link="plugins:routing_tables:routingtable_list",
+                        link="plugins:nautobot_routing_tables:routingtable_list",
                         name="Routing Tables",
-                        buttons=(NavMenuAddButton(link="plugins:routing_tables:routingtable_add"),),
+                        buttons=(
+                            NavMenuAddButton(link="plugins:nautobot_routing_tables:routingtable_add"),
+                        ),
                     ),
                     NavMenuItem(
-                        link="plugins:routing_tables:routingprotocol_list",
+                        link="plugins:nautobot_routing_tables:routingprotocol_list",
                         name="Routing Protocols",
-                        buttons=(NavMenuAddButton(link="plugins:routing_tables:routingprotocol_add"),),
+                        buttons=(
+                            NavMenuAddButton(link="plugins:nautobot_routing_tables:routingprotocol_add"),
+                        ),
                     ),
                     NavMenuItem(
-                        link="plugins:routing_tables:route_list",
+                        link="plugins:nautobot_routing_tables:route_list",
                         name="Routes",
-                        buttons=(NavMenuAddButton(link="plugins:routing_tables:route_add"),),
+                        buttons=(
+                            NavMenuAddButton(link="plugins:nautobot_routing_tables:route_add"),
+                        ),
                     ),
                     NavMenuItem(
-                        link="plugins:routing_tables:protocoltype_list",
+                        link="plugins:nautobot_routing_tables:protocoltype_list",
                         name="Protocol Types",
-                        buttons=(NavMenuAddButton(link="plugins:routing_tables:protocoltype_add"),),
-                    ),
-                    NavMenuItem(
-                        link="plugins:routing_tables:config",
-                        name="Configuration",
-                    ),
+                        buttons=(
+                            NavMenuAddButton(link="plugins:nautobot_routing_tables:protocoltype_add"),
+                        ),
+                    )
                 ),
             ),
         ),

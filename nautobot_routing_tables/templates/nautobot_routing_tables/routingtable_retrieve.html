@@ -1,0 +1,19 @@
+{% extends "generic/object_retrieve.html" %}
+
+{% block content_full_width_page %}
+    <div class="card mt-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <strong>Routes</strong>
+            <span class="text-muted">{{ routes_count|default:0 }}</span>
+        </div>
+        <div class="card-body">
+            {% if routes_table %}
+                {% include "inc/table.html" with table=routes_table %}
+            {% else %}
+                <div class="text-muted">
+                    No routes associated with this routing table.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

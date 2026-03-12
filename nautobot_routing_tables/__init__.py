@@ -1,19 +1,29 @@
+"""App declaration for nautobot_routing_tables."""
+
+# Metadata is inherited from Nautobot. If not including Nautobot in the environment, this should be added
+from importlib import metadata
+
 from nautobot.apps import NautobotAppConfig
 
-__version__ = '1.1.1'
+try:
+    __version__ = metadata.version(__name__)
+except metadata.PackageNotFoundError:
+    __version__ = "0.0.0"
+
 
 class NautobotRoutingTablesConfig(NautobotAppConfig):
+    """App configuration for the nautobot_routing_tables app."""
+
     name = "nautobot_routing_tables"
     verbose_name = "Nautobot Routing Tables"
-    description = "Model routing tables per device and VRF, including optional auto-managed connected routes."
-    version = "1.1.1"
+    version = __version__
     author = "Never77"
+    description = "Nautobot Routing Tables."
     base_url = "routing-tables"
-    min_version = "2.4.0"
-    max_version = "4.0.0"
+    required_settings = []
+    default_settings = {}
+    docs_view_name = "plugins:nautobot_routing_tables:docs"
+    searchable_models = []
 
-    config_view_name = "plugins:routing_tables:config"
-    menu_items = "routing_tables.navigation.menu_items"
 
-
-config = NautobotRoutingTablesConfig
+config = NautobotRoutingTablesConfig  # pylint:disable=invalid-name

@@ -1,10 +1,11 @@
 from django.views.generic import TemplateView
+from django_tables2 import RequestConfig
 from nautobot.apps.views import NautobotUIViewSet
 
 from .filters import ProtocolTypeFilterSet, RouteFilterSet, RoutingProtocolFilterSet, RoutingTableFilterSet
 from .forms import ProtocolTypeForm, RouteForm, RoutingProtocolForm, RoutingTableForm
 from .models import ProtocolType, Route, RoutingProtocol, RoutingTable
-from .tables import ProtocolTypeTable, RouteTable, RoutingProtocolTable, RoutingTableTable
+from .tables import ProtocolTypeTable, RouteTable, RoutingProtocolTable, RoutingTableTable, RoutingTableDetailRouteTable
 
 
 class ConfigView(TemplateView):
@@ -24,6 +25,34 @@ class RoutingTableUIViewSet(NautobotUIViewSet):
     table_class = RoutingTableTable
     form_class = RoutingTableForm
 
+    def get_extra_context(self, request, instance=None):
+        context = super().get_extra_context(request, instance=instance)
+
+        if instance is not None:
+            routes = (
+                Route.objects.filter(routing_table=instance)
+                .select_related(
+                    "routing_table",
+                    "prefix",
+                    "protocol",
+                    "protocol__protocol_type",
+                    "next_hop_interface",
+                    "source_interface",
+                )
+                .order_by("prefix__prefix_length", "prefix__network")
+            )
+
+            routes_table = RoutingTableDetailRouteTable(routes)
+            RequestConfig(
+                request,
+                paginate={"per_page": 25},
+            ).configure(routes_table)
+
+            context["routes_table"] = routes_table
+            context["routes_count"] = routes.count()
+
+        return context
+
 
 class RoutingProtocolUIViewSet(NautobotUIViewSet):
     queryset = RoutingProtocol.objects.select_related("routing_table", "protocol_type")
@@ -33,7 +62,14 @@ class RoutingProtocolUIViewSet(NautobotUIViewSet):
 
 
 class RouteUIViewSet(NautobotUIViewSet):
-    queryset = Route.objects.select_related("routing_table", "prefix", "protocol", "next_hop_interface", "source_interface")
+    queryset = Route.objects.select_related(
+        "routing_table",
+        "prefix",
+        "protocol",
+        "protocol__protocol_type",
+        "next_hop_interface",
+        "source_interface",
+    )
     filterset_class = RouteFilterSet
     table_class = RouteTable
     form_class = RouteForm

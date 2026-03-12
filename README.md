@@ -1,71 +1,66 @@
-# Nautobot App: Routing Tables
+# Nautobot Routing Tables
 
-A Nautobot App to model **routing tables per Device + VRF**, including routes and routing protocols,
-and optional automatic management of **connected routes** derived from interface/IP/cable state.
+<!--
+Developer Note - Remove Me!
 
-Repository layout aligns with the **Nautobot App Cookiecutter** conventions.
+The README will have certain links/images broken until the PR is merged into `develop`. Update the GitHub links with whichever branch you're using (main etc.) if different.
 
-## Features
+The logo of the project is a placeholder (docs/images/icon-nautobot-routing-tables.png) - please replace it with your app icon, making sure it's at least 200x200px and has a transparent background!
 
-- **RoutingTable** per (Device, VRF)
-- **Route** entries referencing native **IPAM Prefix** objects (destination)
-- **RoutingProtocol** instances referencing a **ProtocolType**
-- Default **administrative distances** per protocol type, overridable per protocol instance or per route
-- Optional auto-create/delete **managed connected routes** when enabled:
-  - Interface admin state changes (`Interface.enabled`)
-  - Cable connect/disconnect changes (optional requirement)
-  - IP addresses assigned/removed to interfaces
+To avoid extra work and temporary links, make sure that publishing docs (or merging a PR) is done at the same time as setting up the docs site on RTD, then test everything.
+-->
 
-## Permissions
+<p align="center">
+  <img src="https://raw.githubusercontent.com/BadPlayers/nautobot-app-nautobot-routing-tables/develop/docs/images/icon-nautobot-routing-tables.png" class="logo" height="200px">
+  <br>
+  <a href="https://github.com/BadPlayers/nautobot-app-nautobot-routing-tables/actions"><img src="https://github.com/BadPlayers/nautobot-app-nautobot-routing-tables/actions/workflows/ci.yml/badge.svg?branch=main"></a>
+  <a href="https://docs.nautobot.com/projects/nautobot-routing-tables/en/latest/"><img src="https://readthedocs.org/projects/nautobot-app-routing-tables/badge/"></a>
+  <a href="https://pypi.org/project/nautobot-routing-tables/"><img src="https://img.shields.io/pypi/v/nautobot-routing-tables"></a>
+  <a href="https://pypi.org/project/nautobot-routing-tables/"><img src="https://img.shields.io/pypi/dm/nautobot-routing-tables"></a>
+  <br>
+  An <a href="https://networktocode.com/nautobot-apps/">App</a> for <a href="https://nautobot.com/">Nautobot</a>.
+</p>
 
-All new models are Django models and therefore automatically get standard permissions:
-- `view`, `add`, `change`, `delete` for each of:
-  - ProtocolType
-  - RoutingTable
-  - RoutingProtocol
-  - Route
+## Overview
 
-UI/API viewsets use Nautobot's standard permission enforcement.
+> Developer Note: Add a long (2-3 paragraphs) description of what the App does, what problems it solves, what functionality it adds to Nautobot, what external systems it works with etc.
 
-## Compatibility
+### Screenshots
 
-- Nautobot **2.4+** and **3.x**
-- Python **3.10+**
+> Developer Note: Add any representative screenshots of the App in action. These images should also be added to the `docs/user/app_use_cases.md` section.
 
-## Install
+> Developer Note: Place the files in the `docs/images/` folder and link them using only full URLs from GitHub, for example: `![Overview](https://raw.githubusercontent.com/BadPlayers/nautobot-app-nautobot-routing-tables/develop/docs/images/app-overview.png)`. This absolute static linking is required to ensure the README renders properly in GitHub, the docs site, and any other external sites like PyPI.
 
-```bash
-pip install .
-```
+More screenshots can be found in the [Using the App](https://docs.nautobot.com/projects/nautobot-routing-tables/en/latest/user/app_use_cases/) page in the documentation. Here's a quick overview of some of the app's added functionality:
 
-Enable the app in `nautobot_config.py`:
+![](https://raw.githubusercontent.com/BadPlayers/nautobot-app-nautobot-routing-tables/develop/docs/images/placeholder.png)
 
-```python
-PLUGINS = [
-  "nautobot_routing_tables",
-]
+## Try it out!
 
-PLUGINS_CONFIG = {
-  "nautobot_routing_tables": {
-    "AUTO_MANAGE_CONNECTED_ROUTES": True,
-    "AUTO_CREATE_PREFIXES_FOR_CONNECTED_ROUTES": True,
-    "REQUIRE_CABLE_FOR_CONNECTED_ROUTES": True,
-    "CONNECTED_ROUTE_PROTOCOL_SLUG": "connected",
-  }
-}
-```
+> Developer Note: Only keep this section if appropriate. Update link to correct sandbox.
 
-Apply migrations:
+This App is installed in the Nautobot Community Sandbox found over at [demo.nautobot.com](https://demo.nautobot.com/)!
 
-```bash
-nautobot-server post_upgrade
-```
+> For a full list of all the available always-on sandbox environments, head over to the main page on [networktocode.com](https://www.networktocode.com/nautobot/sandbox-environments/).
 
-## Documentation (MkDocs)
+## Documentation
 
-```bash
-pip install -e ".[docs]"
-mkdocs build
-python -m nautobot_routing_tables.tools.copy_docs_to_static
-nautobot-server collectstatic  # if required by your deployment
-```
+Full documentation for this App can be found over on the [Nautobot Docs](https://docs.nautobot.com) website:
+
+- [User Guide](https://docs.nautobot.com/projects/nautobot-routing-tables/en/latest/user/app_overview/) - Overview, Using the App, Getting Started.
+- [Administrator Guide](https://docs.nautobot.com/projects/nautobot-routing-tables/en/latest/admin/install/) - How to Install, Configure, Upgrade, or Uninstall the App.
+- [Developer Guide](https://docs.nautobot.com/projects/nautobot-routing-tables/en/latest/dev/contributing/) - Extending the App, Code Reference, Contribution Guide.
+- [Release Notes / Changelog](https://docs.nautobot.com/projects/nautobot-routing-tables/en/latest/admin/release_notes/).
+- [Frequently Asked Questions](https://docs.nautobot.com/projects/nautobot-routing-tables/en/latest/user/faq/).
+
+### Contributing to the Documentation
+
+You can find all the Markdown source for the App documentation under the [`docs`](https://github.com/BadPlayers/nautobot-app-nautobot-routing-tables/tree/develop/docs) folder in this repository. For simple edits, a Markdown capable editor is sufficient: clone the repository and edit away.
+
+If you need to view the fully-generated documentation site, you can build it with [MkDocs](https://www.mkdocs.org/). A container hosting the documentation can be started using the `invoke` commands (details in the [Development Environment Guide](https://docs.nautobot.com/projects/nautobot-routing-tables/en/latest/dev/dev_environment/#docker-development-environment)) on [http://localhost:8001](http://localhost:8001). Using this container, as your changes to the documentation are saved, they will be automatically rebuilt and any pages currently being viewed will be reloaded in your browser.
+
+Any PRs with fixes or improvements are very welcome!
+
+## Questions
+
+For any questions or comments, please check the [FAQ](https://docs.nautobot.com/projects/nautobot-routing-tables/en/latest/user/faq/) first. Feel free to also swing by the [Network to Code Slack](https://networktocode.slack.com/) (channel `#nautobot`), sign up [here](http://slack.networktocode.com/) if you don't have an account.

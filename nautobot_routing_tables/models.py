@@ -36,11 +36,16 @@ class RoutingTable(PrimaryModel):
     name = models.CharField(max_length=128)
     slug = AutoSlugField(populate_from="name")
     device = models.ForeignKey("dcim.Device", on_delete=models.CASCADE, related_name="routing_tables")
-    vrf = models.ForeignKey("ipam.VRF", on_delete=models.CASCADE, related_name="routing_tables")
+    vrf = models.ForeignKey("ipam.VRF", on_delete=models.CASCADE, related_name="routing_tables", null=True, blank=True)
 
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=("device", "vrf"), name="unique_routing_table_per_device_vrf"),
+            models.UniqueConstraint(
+                fields=("device",),
+                condition=models.Q(vrf__isnull=True),
+                name="unique_global_routing_table_per_device",
+            ),
         ]
         ordering = ("device__name", "vrf__name")
 
@@ -74,7 +79,9 @@ class RoutingProtocol(PrimaryModel):
 class Route(PrimaryModel):
     routing_table = models.ForeignKey(RoutingTable, on_delete=models.CASCADE, related_name="routes")
     prefix = models.ForeignKey("ipam.Prefix", on_delete=models.PROTECT, related_name="routes")
-    protocol = models.ForeignKey(RoutingProtocol, on_delete=models.SET_NULL, null=True, blank=True, related_name="routes")
+    protocol = models.ForeignKey(
+        RoutingProtocol, on_delete=models.SET_NULL, null=True, blank=True, related_name="routes"
+    )
     next_hop_ip = models.GenericIPAddressField(null=True, blank=True)
     next_hop_interface = models.ForeignKey(
         "dcim.Interface", on_delete=models.SET_NULL, null=True, blank=True, related_name="routes_as_next_hop"
@@ -94,19 +101,29 @@ class Route(PrimaryModel):
                 name="unique_route_semantics_per_table",
             ),
         ]
-        ordering = ("routing_table__device__name", "routing_table__vrf__name", "prefix__prefix_length", "prefix__network")
+        ordering = (
+            "routing_table__device__name",
+            "routing_table__vrf__name",
+            "prefix__prefix_length",
+            "prefix__network",
+        )
 
     def clean(self):
         super().clean()
-        if self.prefix and self.routing_table and self.prefix.vrf_id != self.routing_table.vrf_id:
-            raise ValidationError({"prefix": "Prefix VRF must match the routing table VRF."})
+
+        if self.prefix and self.routing_table and self.routing_table.vrf:
+            if not self.routing_table.vrf.prefixes.filter(pk=self.prefix.pk).exists():
+                raise ValidationError({"prefix": "Prefix VRF must match the routing table VRF."})
+
         if self.next_hop_ip and self.prefix:
             dst = ipaddress.ip_network(str(self.prefix.prefix))
             nh = ipaddress.ip_address(self.next_hop_ip)
             if dst.version != nh.version:
                 raise ValidationError({"next_hop_ip": "Next-hop address family must match the route prefix."})
+
         if self.admin_distance is None and self.protocol is not None:
             self.admin_distance = self.protocol.effective_admin_distance()
+
         if self.is_managed and not self.source_interface:
             raise ValidationError({"source_interface": "Managed routes must have a source interface."})
 

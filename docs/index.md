@@ -1,3 +1,7 @@
-# Nautobot Routing Tables
+---
+hide:
+  - navigation
+glightbox: false
+---
 
-A routing table model per Device + VRF.
+--8<-- "README.md"
