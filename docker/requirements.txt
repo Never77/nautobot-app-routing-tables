@@ -1,0 +1,1 @@
+nautobot-app-routing-tables==1.1.1
