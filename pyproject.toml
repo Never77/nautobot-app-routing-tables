@@ -2,12 +2,12 @@
 name = "nautobot-app-routing-tables"
 version = "1.1.2"
 description = "Nautobot Routing Tables"
-authors = ["Never77 <hgodzien@mgail.com>"]
+authors = ["Never77 <hgodzien@gmail.com>"]
 license = "Apache-2.0"
 readme = "README.md"
-homepage = "https://github.com/BadPlayers/nautobot-app-nautobot-routing-tables"
-repository = "https://github.com/BadPlayers/nautobot-app-nautobot-routing-tables"
-documentation = "https://docs.nautobot.com/projects/nautobot-routing-tables/en/latest/"
+homepage = "https://github.com/BadPlayers/nautobot-app-routing-tables"
+repository = "https://github.com/BadPlayers/nautobot-app-routing-tables"
+#documentation = "https://docs.nautobot.com/projects/nautobot-routing-tables/en/latest/"
 keywords = ["nautobot", "nautobot-app", "nautobot-plugin"]
 classifiers = [
     "Intended Audience :: Developers",
@@ -166,7 +166,7 @@ directory = "changes"
 filename = "docs/admin/release_notes/version_X.Y.md"
 template = "development/towncrier_template.j2"
 start_string = "<!-- towncrier release notes start -->"
-issue_format = "[#{issue}](https://github.com/BadPlayers/nautobot-app-nautobot-routing-tables/issues/{issue})"
+issue_format = "[#{issue}](https://github.com/BadPlayers/nautobot-app-routing-tables/issues/{issue})"
 
 [[tool.towncrier.type]]
 directory = "breaking"
