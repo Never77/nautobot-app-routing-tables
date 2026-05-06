@@ -39,6 +39,10 @@ class RouteFormTestCase(SimpleTestCase):
             ],
         )
 
+    def test_route_form_labels_admin_distance_as_override(self):
+        self.assertEqual(RouteForm.base_fields["admin_distance"].label, "Admin Distance Override")
+        self.assertFalse(RouteForm.base_fields["admin_distance"].required)
+
     @patch("nautobot_routing_tables.forms.NautobotModelForm.__init__", return_value=None)
     def test_route_form_init_sets_initial_next_hop(self, _super_init):
         form = RouteForm.__new__(RouteForm)
@@ -136,6 +140,18 @@ class RouteFormTestCase(SimpleTestCase):
     def test_clean_clears_next_hop_fields_when_missing(self, super_clean):
         form = RouteForm.__new__(RouteForm)
         cleaned = RouteForm.clean(form)
+        self.assertIsNone(cleaned["next_hop_type"])
+        self.assertIsNone(cleaned["next_hop_id"])
+        super_clean.assert_called_once_with()
+
+    @patch("nautobot_routing_tables.forms.NautobotModelForm.clean", return_value=None)
+    def test_clean_handles_empty_parent_clean_result(self, super_clean):
+        form = RouteForm.__new__(RouteForm)
+        form.cleaned_data = {"dynamic_groups": []}
+
+        cleaned = RouteForm.clean(form)
+
+        self.assertEqual(cleaned["dynamic_groups"], [])
         self.assertIsNone(cleaned["next_hop_type"])
         self.assertIsNone(cleaned["next_hop_id"])
         super_clean.assert_called_once_with()

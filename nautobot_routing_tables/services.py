@@ -163,7 +163,7 @@ def export_routing_tables_as_csv(queryset) -> str:
                 "protocol": route.protocol,
                 "next_hop": route.next_hop_display if route.next_hop else "",
                 "metric": route.metric or "",
-                "admin_distance": route.admin_distance or "",
+                "admin_distance": route.admin_distance if route.admin_distance is not None else "",
                 "admin_distance_override": override.admin_distance_override if override else "",
                 "parameters": json.dumps(override.parameters) if override and override.parameters else "",
                 "is_managed": str(route.is_managed).lower(),

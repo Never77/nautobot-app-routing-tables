@@ -135,9 +135,6 @@ class Route(PrimaryModel):
         if self.next_hop and self.prefix:
             self._clean_next_hop()
 
-        if self.admin_distance is None:
-            self.admin_distance = self.resolved_admin_distance
-
         if self.is_managed and not self.source_interface:
             raise ValidationError({"source_interface": "Managed routes must have a source interface."})
 

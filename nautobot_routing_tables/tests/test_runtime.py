@@ -203,44 +203,33 @@ class ViewsTestCase(SimpleTestCase):
     @patch("nautobot_routing_tables.views.reverse", side_effect=lambda name: f"/{name}/")
     @patch("nautobot_routing_tables.views.RequestConfig")
     @patch("nautobot_routing_tables.views.RoutingTableDetailRouteTable")
-    @patch("nautobot_routing_tables.views.RoutingTableDetailProtocolTable")
     @patch("nautobot_routing_tables.views.Route.objects.filter")
-    @patch("nautobot_routing_tables.views.RoutingProtocol.objects.filter")
     def test_routing_table_extra_context_populates_tables(
         self,
-        protocol_filter,
         route_filter,
-        protocol_table_cls,
         route_table_cls,
         request_config,
         _reverse,
         super_context,
     ):
-        protocol_qs = Mock()
-        protocol_qs.order_by.return_value = protocol_qs
-        protocol_qs.count.return_value = 2
-        protocol_filter.return_value = protocol_qs
-
         route_qs = Mock()
         route_qs.select_related.return_value.order_by.return_value = route_qs
         route_qs.count.return_value = 3
         route_filter.return_value = route_qs
 
-        protocol_table = Mock()
         route_table = Mock()
-        protocol_table_cls.return_value = protocol_table
         route_table_cls.return_value = route_table
         request_config.return_value.configure = Mock()
 
         view = views.RoutingTableUIViewSet()
         instance = SimpleNamespace(pk="abc")
-        context = view.get_extra_context(request=SimpleNamespace(), instance=instance)
+        request = SimpleNamespace(user=SimpleNamespace())
+        context = view.get_extra_context(request=request, instance=instance)
 
         self.assertTrue(context["base"])
-        self.assertEqual(context["protocols_count"], 2)
+        route_table_cls.assert_called_once_with(route_qs, user=request.user)
         self.assertEqual(context["routes_count"], 3)
         self.assertIn("routing_table=abc", context["add_route_url"])
-        self.assertIn("routing_table=abc", context["add_override_url"])
 
     @patch("nautobot_routing_tables.views.NautobotUIViewSet.get_form_kwargs", return_value={})
     def test_protocol_view_get_form_kwargs_prefills_routing_table(self, super_kwargs):

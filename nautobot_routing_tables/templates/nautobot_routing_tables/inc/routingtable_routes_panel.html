@@ -1,0 +1,7 @@
+{% if routes_table %}
+    {% include "inc/table.html" with table=routes_table %}
+{% else %}
+    <div class="text-muted">
+        No routes associated with this routing table.
+    </div>
+{% endif %}

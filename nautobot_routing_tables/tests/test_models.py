@@ -100,7 +100,7 @@ class RouteModelTestCase(SimpleTestCase):
     @patch("nautobot.extras.models.customfields.CustomField.objects.get_for_model", return_value=[])
     @patch("nautobot_routing_tables.models.Route.next_hop", new_callable=PropertyMock)
     @patch("nautobot_routing_tables.models.RoutingProtocol.objects.filter")
-    def test_clean_sets_admin_distance_from_override(self, protocol_filter, next_hop_property, _custom_fields):
+    def test_clean_preserves_blank_admin_distance_override(self, protocol_filter, next_hop_property, _custom_fields):
         protocol_filter.return_value.first.return_value = Mock(admin_distance_override=95)
         next_hop_property.return_value = None
         vrf = make_vrf()
@@ -110,7 +110,8 @@ class RouteModelTestCase(SimpleTestCase):
 
         route.clean()
 
-        self.assertEqual(route.admin_distance, 95)
+        self.assertIsNone(route.admin_distance)
+        self.assertEqual(route.resolved_admin_distance, 95)
 
     @patch("nautobot.extras.models.customfields.CustomField.objects.get_for_model", return_value=[])
     @patch("nautobot_routing_tables.models.Route.next_hop", new_callable=PropertyMock)

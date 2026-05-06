@@ -3,24 +3,6 @@
 {% block content_full_width_page %}
     <div class="card mt-3">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <strong>Protocol Overrides</strong>
-            <div class="d-flex align-items-center gap-2">
-                <a href="{{ add_override_url }}" class="btn btn-primary btn-sm">Add Override</a>
-                <span class="text-muted">{{ protocols_count|default:0 }}</span>
-            </div>
-        </div>
-        <div class="card-body">
-            {% if protocols_table %}
-                {% include "inc/table.html" with table=protocols_table %}
-            {% else %}
-                <div class="text-muted">
-                    No protocol overrides configured for this routing table.
-                </div>
-            {% endif %}
-        </div>
-    </div>
-    <div class="card mt-3">
-        <div class="card-header d-flex justify-content-between align-items-center">
             <strong>Routes</strong>
             <div class="d-flex align-items-center gap-2">
                 <a href="{{ add_route_url }}" class="btn btn-primary btn-sm">Add Route</a>

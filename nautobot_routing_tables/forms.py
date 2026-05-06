@@ -27,6 +27,13 @@ class RouteForm(NautobotModelForm):
         required=False,
         help_text="IP address, prefix or local interface name. Prefix values can be prefixed with 'prefix:' and interfaces with 'interface:'.",
     )
+    admin_distance = forms.IntegerField(
+        required=False,
+        min_value=0,
+        max_value=255,
+        label="Admin Distance Override",
+        help_text="Route-specific administrative distance. Leave blank to use the protocol default.",
+    )
 
     class Meta:
         model = Route
@@ -80,6 +87,8 @@ class RouteForm(NautobotModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
+        if cleaned_data is None:
+            cleaned_data = self.cleaned_data
         next_hop = cleaned_data.get("next_hop")
         if next_hop is None:
             cleaned_data["next_hop_type"] = None
@@ -136,7 +145,12 @@ class RouteBulkEditForm(BulkEditForm):
     pk = forms.ModelMultipleChoiceField(queryset=Route.objects.none(), widget=forms.MultipleHiddenInput)
     protocol = forms.ChoiceField(choices=Route._meta.get_field("protocol").choices, required=False)
     metric = forms.IntegerField(required=False, min_value=0)
-    admin_distance = forms.IntegerField(required=False, min_value=0, max_value=255)
+    admin_distance = forms.IntegerField(
+        required=False,
+        min_value=0,
+        max_value=255,
+        label="Admin Distance Override",
+    )
     is_managed = forms.NullBooleanField(required=False)
 
     def __init__(self, *args, **kwargs):

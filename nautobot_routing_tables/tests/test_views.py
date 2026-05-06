@@ -14,6 +14,11 @@ class RoutingViewsTestCase(SimpleTestCase):
         self.assertTrue(hasattr(tables, "RoutingTableDetailProtocolTable"))
         self.assertTrue(hasattr(tables, "RoutingTableDetailRouteTable"))
 
+    def test_route_tables_expose_route_actions(self):
+        self.assertIsInstance(tables.RouteTable.base_columns["actions"], tables.RouteActionsColumn)
+        self.assertIsInstance(tables.RoutingTableDetailRouteTable.base_columns["actions"], tables.RouteActionsColumn)
+        self.assertIn("pk", tables.RoutingTableDetailRouteTable.base_columns)
+
     def test_list_tables_expose_toggle_pk_column(self):
         self.assertIn("pk", tables.RoutingTableTable.base_columns)
         self.assertIn("pk", tables.RoutingProtocolTable.base_columns)
